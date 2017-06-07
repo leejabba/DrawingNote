@@ -32,6 +32,17 @@ public class MainActivity extends AppCompatActivity {
 
         //Board 객체에 Paint 속성 설정한 후 프레임 레이아웃 뷰에 추가하기
         frameLayout = (FrameLayout) findViewById(R.id.layout);
+//        frameLayout.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        setPaintProperty(currentColor, currentWidth);
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
         board = new Board(getBaseContext());
         board.setPath(currentColor, currentWidth);
         frameLayout.addView(board);
@@ -52,7 +63,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 currentWidth = progress;
-                seekProcess.setText(progress + "");
+                if (progress == 0) {
+                    seekProcess.setText("1");
+                } else if (progress == 100) {
+                    seekProcess.setText("100");
+                } else {
+                    seekProcess.setText(progress + "");
+                }
             }
 
             @Override
@@ -72,12 +89,15 @@ public class MainActivity extends AppCompatActivity {
         if (group.getId() == R.id.radioGroup) {
             switch (checkedId) {
                 case R.id.radioBtnGreen:
+                    currentColor = GREEN;
                     setPaintProperty(GREEN, currentWidth);
                     break;
                 case R.id.radioBtnBlue:
+                    currentColor = BLUE;
                     setPaintProperty(BLUE, currentWidth);
                     break;
                 case R.id.radioBtnRed:
+                    currentColor = RED;
                     setPaintProperty(RED, currentWidth);
                     break;
             }
@@ -94,6 +114,4 @@ public class MainActivity extends AppCompatActivity {
         board.setPath(currentColor, currentWidth);
         frameLayout.addView(board);
     }
-
-
 }
