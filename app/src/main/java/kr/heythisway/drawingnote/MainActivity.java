@@ -16,6 +16,9 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     FrameLayout frameLayout;
@@ -26,7 +29,10 @@ public class MainActivity extends AppCompatActivity {
     final static int BLUE = 2;
     final static int RED = 3;
 
-    Board board;
+    int currentColor = 1;
+    int currentWidth = 10;
+
+    Board board, board1, board2, board3, boardSample;
     Paint paint;
 
     int color;
@@ -36,52 +42,54 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final List<Board> boards = new ArrayList<>();
+        board = new Board(getBaseContext());
+        board.setPath(currentColor, currentWidth);
+//        boards.add(board);
+
         frameLayout = (FrameLayout) findViewById(R.id.layout);
-
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
         radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioBtnGreen:
-                        color = 1;
-                        board.setPaint(paint, color);
-                        break;
-                    case R.id.radioBtnBlue:
-                        color = 2;
-                        board.setPaint(paint, color);
-                        break;
-                    case R.id.radioBtnRed:
-                        color = 3;
-                        board.setPaint(paint, color);
-                        break;
+                if (group.getId() == R.id.radioGroup) {
+                    switch (checkedId) {
+                        case R.id.radioBtnGreen:
+                            if (currentColor != GREEN) {
+                                currentColor = GREEN;
+                                board = new Board(getBaseContext());
+                                boardSample = board;
+                                boardSample.setPath(currentColor, currentWidth);
+                                Toast.makeText(MainActivity.this, "녹색을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
+                                frameLayout.addView(boardSample);
+                            }
+                            break;
+                        case R.id.radioBtnBlue:
+                            if (currentColor != BLUE) {
+                                currentColor = BLUE;
+                                board = new Board(getBaseContext());
+                                boardSample = board;
+                                boardSample.setPath(currentColor, currentWidth);
+                                Toast.makeText(MainActivity.this, "파랑색을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
+                                frameLayout.addView(boardSample);
+                            }
+                            break;
+                        case R.id.radioBtnRed:
+                            if (currentColor != RED) {
+                                currentColor = RED;
+                                board = new Board(getBaseContext());
+                                boardSample = board;
+                                boardSample.setPath(currentColor, currentWidth);
+                                Toast.makeText(MainActivity.this, "빨강색을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
+                                frameLayout.addView(boardSample);
+                            }
+                            break;
+                    }
                 }
             }
         });
-
-
-        board = new Board(getBaseContext());
-        //붓을 만들어 보드에 담는다.
-        paint = new Paint();
-        board.setPaint(paint, color);
 
         frameLayout.addView(board);
 
@@ -90,36 +98,38 @@ public class MainActivity extends AppCompatActivity {
     class Board extends View {
         Paint paint;
         Path path;
+//        List<Path> paths = new ArrayList<>();
 
 
         public Board(Context context) {
             super(context);
-            path = new Path();
         }
 
-        public void setPaint(Paint paint, int color) {
-            this.paint = paint;
+        public void setPath(int color, int width) {
+            path = new Path();
+            paint = new Paint();
             switch (color) {
                 case GREEN:
                     paint.setColor(Color.GREEN);
-                    paint.setStrokeWidth(10);
                     break;
                 case BLUE:
                     paint.setColor(Color.BLUE);
-                    paint.setStrokeWidth(20);
                     break;
                 case RED:
                     paint.setColor(Color.RED);
-                    paint.setStrokeWidth(30);
                     break;
             }
+            paint.setStrokeWidth(width);
             paint.setStyle(Paint.Style.STROKE);
+//            paths.add(path);
         }
 
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
+//            for (Path path : paths) {
             canvas.drawPath(path, paint);
+//            }
         }
 
         @Override
