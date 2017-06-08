@@ -1,9 +1,10 @@
 package kr.heythisway.drawingnote;
 
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -19,9 +20,10 @@ public class MainActivity extends AppCompatActivity {
     final static int GREEN = 1;
     final static int BLUE = 2;
     final static int RED = 3;
+    int current_width = 10;
+    int current_color = Color.GREEN;
 
-    int currentColor = 1;
-    int currentWidth = 10;
+    Paint current_brush;    // 현재 세팅된 브러쉬
 
     Board board;
 
@@ -30,46 +32,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Board 객체에 Paint 속성 설정한 후 프레임 레이아웃 뷰에 추가하기
+        // 뷰 아이디 찾기
         frameLayout = (FrameLayout) findViewById(R.id.layout);
-//        frameLayout.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        setPaintProperty(currentColor, currentWidth);
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
-        board = new Board(getBaseContext());
-        board.setPath(currentColor, currentWidth);
-        frameLayout.addView(board);
-
-        // 라디오 버튼 (선의 색상)
+        // 라디오 버튼 (색 설정)
         radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                selectRadio(group, checkedId);
+                switch (checkedId) {
+                    case R.id.radioBtnGreen:
+                        setBrush(Color.GREEN, current_width);
+                        break;
+                    case R.id.radioBtnBlue:
+                        setBrush(Color.BLUE, current_width);
+                        break;
+                    case R.id.radioBtnRed:
+                        setBrush(Color.RED, current_width);
+                        break;
+                }
             }
         });
-
-        // 시크바 (선의 두께)
+        // 시크바 (선 두께 설정)
         seekBar = (SeekBar) findViewById(R.id.seekBar);
-        seekProcess = (TextView) findViewById(R.id.seekProcess);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                currentWidth = progress;
-                if (progress == 0) {
-                    seekProcess.setText("1");
-                } else if (progress == 100) {
-                    seekProcess.setText("100");
-                } else {
-                    seekProcess.setText(progress + "");
-                }
+                current_width = progress;
             }
 
             @Override
@@ -79,39 +67,36 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                setPaintProperty(currentColor, currentWidth);
+                // setBrush 호출
+                setBrush(current_color, current_width);
             }
         });
-    }
 
-    // 라디오 버튼 선택 분기 메서드
-    private void selectRadio(RadioGroup group, int checkedId) {
-//        if (group.getId() == R.id.radioGroup) {
-            switch (checkedId) {
-                case R.id.radioBtnGreen:
-                    currentColor = GREEN;
-                    setPaintProperty(GREEN, currentWidth);
-                    break;
-                case R.id.radioBtnBlue:
-                    currentColor = BLUE;
-                    setPaintProperty(BLUE, currentWidth);
-                    break;
-                case R.id.radioBtnRed:
-                    currentColor = RED;
-                    setPaintProperty(RED, currentWidth);
-                    break;
-            }
-//        }
-    }
-
-    // 새로운 Board 객체를 생성해서 라디오 버튼 색상의 Paint 속성을 설정 후 프레임 레이아웃 뷰에 추가
-    private void setPaintProperty(int color, int width) {
-        Log.e("seek", "=======================  seek바가 움직임에따라 setPaintProperty가 실행되었습니다.");
-        currentColor = color;
-        currentWidth = width;
-
+        // 1. 보드 생성
         board = new Board(getBaseContext());
-        board.setPath(currentColor, currentWidth);
+        // 2. 생성한 보드를 화면에 붙이기
         frameLayout.addView(board);
+        // 3. 기본 브러쉬 세팅
+        setBrush(current_color, current_width);
+    }
+
+    private void setBrush(int color, int width) {
+        // 1. 붓(Paint)을 만든다.
+        Paint paint = new Paint();
+        // 2. 색상을 설정한다.
+        paint.setColor(color);
+
+        // 3. 선의 스트로크 스타일 설정
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setAntiAlias(true);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setDither(true);
+
+        // 4. 선의 두께 설정
+        paint.setStrokeWidth(width);
+
+        // 5. 보드에 붓(Paint)을 담는다.
+        Board.setPaint(paint);
     }
 }
