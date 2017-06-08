@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     // 라디오 버튼 선택 분기 메서드
     private void selectRadio(RadioGroup group, int checkedId) {
-        if (group.getId() == R.id.radioGroup) {
+//        if (group.getId() == R.id.radioGroup) {
             switch (checkedId) {
                 case R.id.radioBtnGreen:
                     currentColor = GREEN;
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     setPaintProperty(RED, currentWidth);
                     break;
             }
-        }
+//        }
     }
 
     // 새로운 Board 객체를 생성해서 라디오 버튼 색상의 Paint 속성을 설정 후 프레임 레이아웃 뷰에 추가

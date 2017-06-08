@@ -43,6 +43,7 @@ public class Board extends View {
         paint.setStrokeWidth(width);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setAntiAlias(true);
     }
 
